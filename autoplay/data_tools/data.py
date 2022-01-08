@@ -1,0 +1,1 @@
+"""Module for getting and organizing data from LastFM API."""
