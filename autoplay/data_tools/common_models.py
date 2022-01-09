@@ -1,3 +1,5 @@
+"""Module for classes / functions that are commmon (not specific to Apple Music or LastFM."""
+
 from typing import List
 from datetime import datetime
 
