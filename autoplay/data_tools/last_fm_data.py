@@ -1,4 +1,5 @@
 """Module for getting and organizing data from LastFM API."""
+
 import toml
 import os
 import pylast as pl
@@ -13,7 +14,7 @@ LAST_FM_TIMESTAMP_FORMAT = '%d %b %Y, %H:%M'
 
 def get_secrets():
     """Get secret contents of secrets.toml in outer dir. Do not commit this file."""
-    expected_secret_path ='secrets.toml'
+    expected_secret_path = 'secrets.toml'
     secrets = toml.load(expected_secret_path)
     api_key = secrets['secrets']['api_key']
     secret = secrets['secrets']['secret']
