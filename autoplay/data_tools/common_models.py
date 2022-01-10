@@ -6,7 +6,7 @@ from datetime import datetime
 
 class Track:
     """Internal track class."""
-    def __init__(self, title: str, album: str, date: datetime):
+    def __init__(self, title: str, album: str, artist: str, date: datetime):
         """Instantiate one of our internal track classes.
 
         Args:
@@ -16,11 +16,19 @@ class Track:
         """
         self.title = title
         self.album = album
+        self.artist = artist
         self.date = date
 
     def get_extra_features(self):  # this function will need some brainstorming but will leave as template for now
         """Will go through some sort of API to get extra features associated with a track."""
-        pass
+
+        # get track top tags
+        
+
+    def equals(self, other_track):
+        """Check to see if this track and another are the same track"""
+        return self.title == other_track.title and self.album == other_track.album and self.artist == other_track.artist
+    
 
 
 class User:
