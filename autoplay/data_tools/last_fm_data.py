@@ -101,13 +101,14 @@ def normalize_scrobbles(scrobbles: list):
 
 
 
-def create_user(username: str):
+def create_user(username: str, limit: int = None):
     """Create a common user class from LastFM username.
 
     Args:
         username (str): LastFM username
+        limit (int): The number of scrobbles to fetch
     """
-    scrobbles = get_scrobbles(username)
+    scrobbles = get_scrobbles(username, limit)
     normalized = normalize_scrobbles(scrobbles)
 
     return User(username, normalized)
