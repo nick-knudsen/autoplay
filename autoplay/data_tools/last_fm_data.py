@@ -44,29 +44,31 @@ def get_scrobbles(username: str, limit: int = None):
     return scrobbles
 
 
-def get_top_tags(scrobble: NamedTuple, tags_kept: int = 15):
-    """Get up to NUM_TAGS_KEPT tags for a track if possible
+def get_top_tags(track: pl.Track, tags_kept: int = 15):
+    """Get up to tags_kept tags for a track if possible
 
     Args:
-        scrobble (NamedTuple): LastFM (pylast) class of song (scrobble)
+        track (pl.Track): LastFM (pylast) class of song (track)
         tags_kept (int): The number of top tags to keep
 
     Returns:
-        a list of tags
+        a list of dicts: the tag (key) and its weight (value)
     """
 
-    network = create_network()
-    track = network.get_track(scrobble.artist, scrobble.track)
-
     top_tags = []
-    top_tags.append(track.get_top_tags(limit=tags_kept))
+    top_tags.extend(track.get_top_tags(limit=tags_kept))
     # Add more tags from album and artist if not enough
     if len(top_tags) < tags_kept:
-        top_tags.append(track.get_album().get_top_tags(limit = tags_kept - len(top_tags)))
+        top_tags.extend(track.get_album().get_top_tags(limit = tags_kept - len(top_tags)))
     if len(top_tags) < tags_kept:
-        top_tags.append(track.get_artist().get_top_tags(limit = tags_kept - len(top_tags)))
+        top_tags.extend(track.get_artist().get_top_tags(limit = tags_kept - len(top_tags)))
+    
+    # parse tag data
+    parsed_tags = []
+    for tag in top_tags:
+        parsed_tags.append({tag.item.get_name(): tag.weight})
 
-    return top_tags
+    return parsed_tags
 
 
 def normalize_scrobble(scrobble: NamedTuple):
@@ -79,8 +81,8 @@ def normalize_scrobble(scrobble: NamedTuple):
         [type]: [description]
     """
     parsed_date = datetime.strptime(scrobble.playback_date, LAST_FM_TIMESTAMP_FORMAT)
-    top_tags = get_top_tags(scrobble)
-    normalized = [str(scrobble.track), str(scrobble.album), str(scrobble.artist), top_tags, parsed_date]
+    top_tags = get_top_tags(scrobble.track)
+    normalized = [str(scrobble.track.get_name()), str(scrobble.album), str(scrobble.track.get_artist().get_name()), top_tags, parsed_date]
 
     return normalized
 
