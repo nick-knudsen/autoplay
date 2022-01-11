@@ -22,10 +22,7 @@ class Track:
     def get_extra_features(self):  # this function will need some brainstorming but will leave as template for now
         """Will go through some sort of API to get extra features associated with a track."""
 
-        # get track top tags
-        
-
-    def equals(self, other_track):
+    def __eq__(self, other_track):
         """Check to see if this track and another are the same track"""
         return self.title == other_track.title and self.album == other_track.album and self.artist == other_track.artist
     
