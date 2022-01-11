@@ -44,29 +44,40 @@ def get_scrobbles(username: str, limit: int = None):
     return scrobbles
 
 
-def get_top_tags(track: pl.Track, tags_kept: int = 15):
+def get_top_tags(scrobble: NamedTuple, tags_kept: int = 15):
     """Get up to tags_kept tags for a track if possible
 
     Args:
-        track (pl.Track): LastFM (pylast) class of song (track)
+        scrobble (NamedTuple): LastFM (pylast) class of song (PlayedTrack)
         tags_kept (int): The number of top tags to keep
 
     Returns:
         a list of dicts: the tag (key) and its weight (value)
     """
-
+    track = scrobble.track
     top_tags = []
     top_tags.extend(track.get_top_tags(limit=tags_kept))
+    """Slows down scraping significantly, commented out until a faster method is found"""
     # Add more tags from album and artist if not enough
-    if len(top_tags) < tags_kept:
-        top_tags.extend(track.get_album().get_top_tags(limit = tags_kept - len(top_tags)))
-    if len(top_tags) < tags_kept:
-        top_tags.extend(track.get_artist().get_top_tags(limit = tags_kept - len(top_tags)))
+    # if len(top_tags) < tags_kept:
+    #     try:
+    #         top_tags.extend(track.get_album().get_top_tags(limit = tags_kept - len(top_tags)))
+    #     # cannot find album via track, search for it
+    #     except (AttributeError, pl.WSError) as e:
+    #         network = create_network()
+    #         try:
+    #             network.search_for_album(scrobble.album).get_next_page()[0].get_top_tags(limit = tags_kept - len(top_tags))
+    #         # no results found for search
+    #         except IndexError:
+    #             print(scrobble.album)
+    #             pass
+    # if len(top_tags) < tags_kept:
+    #     top_tags.extend(track.get_artist().get_top_tags(limit = tags_kept - len(top_tags)))
     
     # parse tag data
     parsed_tags = []
     for tag in top_tags:
-        parsed_tags.append({tag.item.get_name(): tag.weight})
+        parsed_tags.append({str(tag.item): tag.weight})
 
     return parsed_tags
 
@@ -81,8 +92,13 @@ def normalize_scrobble(scrobble: NamedTuple):
         [type]: [description]
     """
     parsed_date = datetime.strptime(scrobble.playback_date, LAST_FM_TIMESTAMP_FORMAT)
-    top_tags = get_top_tags(scrobble.track)
-    normalized = [str(scrobble.track.get_name()), str(scrobble.album), str(scrobble.track.get_artist().get_name()), top_tags, parsed_date]
+    #top_tags = get_top_tags(scrobble)
+    top_tags=[]
+    try:
+        artist, title = str(scrobble.track).split(" - ", 1)
+    except ValueError:
+        print(str(scrobble.track))
+    normalized = [title, str(scrobble.album), artist, top_tags, parsed_date]
 
     return normalized
 
