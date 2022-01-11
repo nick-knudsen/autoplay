@@ -6,7 +6,7 @@ from datetime import datetime
 
 class Track:
     """Internal track class."""
-    def __init__(self, title: str, album: str, artist: str, date: datetime):
+    def __init__(self, title: str, album: str, artist: str, tags: List[dict], date: datetime):
         """Instantiate one of our internal track classes.
 
         Args:
@@ -17,6 +17,7 @@ class Track:
         self.title = title
         self.album = album
         self.artist = artist
+        self.tags = tags
         self.date = date
 
     def get_extra_features(self):  # this function will need some brainstorming but will leave as template for now
