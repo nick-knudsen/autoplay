@@ -28,7 +28,7 @@ class Track:
 
     def __eq__(self, other_track):
         """Check to see if this track and another are the same track"""
-        if isinstance(other_track, Track)):
+        if isinstance(other_track, Track):
             return self.__key() == other_track.__key()
         return NotImplemented
     
