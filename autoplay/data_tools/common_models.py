@@ -20,13 +20,20 @@ class Track:
         self.tags = tags
         self.date = date
 
-    def get_extra_features(self):  # this function will need some brainstorming but will leave as template for now
-        """Will go through some sort of API to get extra features associated with a track."""
+    def __key(self):
+        return (self.title, self.album, self.artist)
+    
+    def __hash__(self):
+        return hash(self.__key())
 
     def __eq__(self, other_track):
         """Check to see if this track and another are the same track"""
-        return self.title == other_track.title and self.album == other_track.album and self.artist == other_track.artist
+        if isinstance(other_track, Track)):
+            return self.__key() == other_track.__key()
+        return NotImplemented
     
+    def get_extra_features(self):  # this function will need some brainstorming but will leave as template for now
+        """Will go through some sort of API to get extra features associated with a track."""
 
 
 class User:
