@@ -94,6 +94,6 @@ def calc_all_time_proximities(user: autoplay.User, time_diff_cutoff: timedelta):
             num_scrobbles_a_prox_to_b = sum_and_count[1]
             time_diff_sum = sum_and_count[0]
             proximity = num_scrobbles_overall*time_diff_sum/(num_scrobbles_a*num_scrobbles_a_prox_to_b)
-            track_time_proximities[track_b][track_a] = proximity
+            track_time_proximities[track_b][track_a] = proximity.total_seconds()/10000
 
     return track_time_proximities
