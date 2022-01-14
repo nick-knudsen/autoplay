@@ -136,3 +136,6 @@ secrets.toml
 
 # vs code
 .vscode
+
+# testing notebook
+autoplay/testing.ipynb
