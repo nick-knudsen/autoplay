@@ -11,6 +11,7 @@ from .common_models import Track, User
 
 LAST_FM_TIMESTAMP_FORMAT = '%d %b %Y, %H:%M'
 
+
 def get_secrets():
     """Get secret contents of secrets.toml in outer dir. Do not commit this file."""
     expected_secret_path = 'secrets.toml'
@@ -35,7 +36,7 @@ def get_scrobbles(username: str, limit: int = None):
 
     Args:
         username (str): LastFM username
-        limit (int): the number of scrobbles to get
+        limit (int): the number of scrobbles to get. Defaults to None.
     """
     network = create_network()
     user = network.get_user(username)
@@ -73,7 +74,7 @@ def get_top_tags(scrobble: NamedTuple, tags_kept: int = 15):
     #             pass
     # if len(top_tags) < tags_kept:
     #     top_tags.extend(track.get_artist().get_top_tags(limit = tags_kept - len(top_tags)))
-    
+
     # parse tag data
     parsed_tags = []
     for tag in top_tags:

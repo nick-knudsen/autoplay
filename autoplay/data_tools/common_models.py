@@ -12,6 +12,8 @@ class Track:
         Args:
             title (str): title of song/track
             album (str): album name the song/track belongs to
+            artist (str): the artist
+            tags: (List[dict]): tags associated with the track
             date (datetime): datetime that the track was listened to
         """
         self.title = title
@@ -23,10 +25,9 @@ class Track:
     def get_extra_features(self):  # this function will need some brainstorming but will leave as template for now
         """Will go through some sort of API to get extra features associated with a track."""
 
-    def __eq__(self, other_track):
+    def __eq__(self, other_track: Track):
         """Check to see if this track and another are the same track"""
         return self.title == other_track.title and self.album == other_track.album and self.artist == other_track.artist
-    
 
 
 class User:

@@ -2,6 +2,7 @@
 import time
 from data_tools.last_fm_data import create_user
 
+
 def main_example():
     last_fm_name = 'Nesdunk14'
     print(f"Getting listening history for user {last_fm_name}...")
@@ -10,5 +11,6 @@ def main_example():
     end_fetch = time.perf_counter()
     print(f"History retrieved in {end_fetch-start_fetch:0.1f} seconds.")
     print(f"Number of tracks: {len(my_user.tracks)}")
+
 
 main_example()
