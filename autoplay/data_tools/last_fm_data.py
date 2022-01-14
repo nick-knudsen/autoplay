@@ -23,7 +23,14 @@ def get_secrets():
 
 
 def create_network():
-    """Create a pylast network for accessing the LastFM API"""
+    """Create a pylast network for accessing the LastFM API
+    
+    Args:
+        None
+    
+    Returns:
+        network (pl.LastFMNetwork): a PyLast object for interacting with the LastFM API
+    """
     api_key, secret = get_secrets()
     network = pl.LastFMNetwork(
         api_key=api_key,
@@ -38,7 +45,7 @@ def get_scrobbles(username: str, limit: int = None):
 
     Args:
         username (str): LastFM username
-        limit (int): the number of scrobbles to get
+        limit (int): the number of scrobbles to get, defaults to None, which gets all user scrobbles
     """
     network = create_network()
     user = network.get_user(username)
@@ -52,7 +59,7 @@ def get_top_tags(scrobble: NamedTuple, tags_kept: int = 15):
 
     Args:
         scrobble (NamedTuple): LastFM (pylast) class of song (PlayedTrack)
-        tags_kept (int): The number of top tags to keep
+        tags_kept (int): The number of top tags to keep, defaults to 15
 
     Returns:
         a list of dicts: the tag (key) and its weight (value)
@@ -92,7 +99,7 @@ def normalize_scrobble(scrobble: NamedTuple):
         scrobble (NamedTuple): LastFM (pylast) class of song (scrobble)
 
     Returns:
-        [type]: [description]
+        normalized (list): a normalized format for a scrobble
     """
     parsed_date = datetime.strptime(scrobble.playback_date, LAST_FM_TIMESTAMP_FORMAT)
     #top_tags = get_top_tags(scrobble)
@@ -111,6 +118,9 @@ def normalize_scrobbles(scrobbles: list):
 
     Args:
         scrobbles (list): list of user scrobbles
+    
+    Returns:
+        normalized (list): the user scrobbles in a normalized format
     """
     normalized = []
     for scrobble in scrobbles:
@@ -124,7 +134,11 @@ def create_user(username: str, limit: int = None, overwrite: bool = False):
 
     Args:
         username (str): LastFM username
-        limit (int): The number of scrobbles to fetch
+        limit (int): The number of scrobbles to fetch, defaults to None, which fetches all scrobbles
+        overwrite (bool): whether or not to overwrite an existing csv, defaults to False
+    
+    Returns:
+        (User): an internal User object
     """
     # temp soln until db is working
     # check if user tracks stored in csv
