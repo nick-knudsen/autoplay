@@ -29,6 +29,9 @@ class Track:
             return self.__key() == other_track.__key()
         return NotImplemented
 
+    def __repr__(self):
+        return self.__str__()
+        
     def __str__(self):
         data = [self.title, self.album, self.artist, str(self.date)]
         return ", ".join(data)
