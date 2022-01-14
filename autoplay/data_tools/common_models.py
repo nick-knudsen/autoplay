@@ -19,9 +19,6 @@ class Track:
         self.artist = artist
         self.tags = tags
         self.date = date
-
-    def __key(self):
-        return (self.title, self.album, self.artist)
     
     def __hash__(self):
         return hash(self.__key())
@@ -35,6 +32,9 @@ class Track:
     def __str__(self):
         data = [self.title, self.album, self.artist, str(self.date)]
         return ", ".join(data)
+
+    def __key(self):
+        return (self.title, self.album, self.artist)
 
     def get_extra_features(self):  # this function will need some brainstorming but will leave as template for now
         """Will go through some sort of API to get extra features associated with a track."""
