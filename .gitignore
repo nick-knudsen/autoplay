@@ -127,4 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# API secrets
 secrets.toml
+
+# scrobble data files
+/autoplay/data/*.csv
+
+# vs code
+.vscode
