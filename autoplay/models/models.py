@@ -53,6 +53,8 @@ def calc_track_time_proximity(scrobble_a: autoplay.Track, library: List[autoplay
     time_diff_sums = {}
     # calculate time diff sums
     for scrobble_b in proximal_scrobbles:
+        if scrobble_a == scrobble_b:
+            continue
         time_diff = calc_time_diff(scrobble_a, scrobble_b)
         if scrobble_b in time_diff_sums.keys():
             time_diff_sums[scrobble_b] = np.add(time_diff_sums[scrobble_b], [time_diff, 1])
