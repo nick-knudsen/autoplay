@@ -31,7 +31,11 @@ class Track:
         if isinstance(other_track, Track):
             return self.__key() == other_track.__key()
         return NotImplemented
-    
+
+    def __str__(self):
+        data = [self.title, self.album, self.artist, str(self.date)]
+        return ", ".join(data)
+
     def get_extra_features(self):  # this function will need some brainstorming but will leave as template for now
         """Will go through some sort of API to get extra features associated with a track."""
 
@@ -51,3 +55,5 @@ class User:
     def _update_play_history(self, tracks: List[list]):  # also needs some brainstorming - not most efficient but don't have a better way without complete database
         """Update user to latest version of pulled tracks."""
         self.tracks = [Track(*track) for track in tracks]
+
+    
