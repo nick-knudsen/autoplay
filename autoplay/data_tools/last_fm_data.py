@@ -1,11 +1,12 @@
 """Module for getting and organizing data from LastFM API."""
 
-import toml
 import os
-import pylast as pl
+import csv
 from datetime import datetime
-from typing import NamedTuple
+from typing import NamedTuple, List
 import logging
+import toml
+import pylast as pl
 from .common_models import Track, User
 
 
@@ -17,6 +18,7 @@ def get_secrets():
     secrets = toml.load(expected_secret_path)
     api_key = secrets['secrets']['api_key']
     secret = secrets['secrets']['secret']
+
     return api_key, secret
 
 
@@ -27,6 +29,7 @@ def create_network():
         api_key=api_key,
         api_secret=secret
     )
+
     return network
 
 
@@ -116,15 +119,42 @@ def normalize_scrobbles(scrobbles: list):
     return normalized
 
 
-
-def create_user(username: str, limit: int = None):
+def create_user(username: str, limit: int = None, overwrite: bool = False):
     """Create a common user class from LastFM username.
 
     Args:
         username (str): LastFM username
         limit (int): The number of scrobbles to fetch
     """
-    scrobbles = get_scrobbles(username, limit)
-    normalized = normalize_scrobbles(scrobbles)
+    # temp soln until db is working
+    # check if user tracks stored in csv
+    filepath = os.path.join("data", username + ".csv")
+    if (os.path.exists(filepath) and not overwrite):
+        normalized_scrobbles = get_play_history_from_csv(filepath)
+    else:        
+        scrobbles = get_scrobbles(username, limit)
+        normalized_scrobbles = normalize_scrobbles(scrobbles)
+        write_library_to_csv(username, normalized_scrobbles)
 
-    return User(username, normalized)
+    return User(username, normalized_scrobbles)
+
+
+# temp soln until db is working
+def get_play_history_from_csv(infilepath: str):
+    scrobbles = []
+    with open(infilepath, encoding='utf-8') as infile:
+        reader = csv.reader(infile, delimiter="|")
+        for track in reader:
+            scrobbles.append(track)
+
+    return scrobbles
+
+
+# temp soln until db is working
+def write_library_to_csv(username: str, library: List[list]):
+    outfilepath = os.path.join("data", username + ".csv")
+    with open(outfilepath, 'w', encoding='utf-8', newline='') as outfile:
+        writer = csv.writer(outfile, delimiter="|")
+        writer.writerows(library)
+
+    return
