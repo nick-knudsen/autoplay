@@ -139,3 +139,6 @@ secrets.toml
 
 # testing notebook
 autoplay/testing.ipynb
+firebase_secret.json
+data/*
+test.py

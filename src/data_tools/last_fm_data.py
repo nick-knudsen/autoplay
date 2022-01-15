@@ -51,6 +51,29 @@ def get_scrobbles(username: str, limit: int = None):
     return scrobbles
 
 
+# NOTE: This function will work great with the get_track_scrobbles function
+def get_artists(username: str, limit: int = None):
+    """Get the artists a given user has listened to.
+
+    Args:
+        username (str): LastFM username
+        limit (int, optional): The limit on the number of artists to retrieve. Defaults to None (all artists).
+
+    Returns:
+        [type]: [description]
+    """
+    network = create_network()
+    user = network.get_user(username)
+    lib = user.get_library() # this is the object that holds all the artists a user has listened to
+    return lib.get_artists(limit=limit)
+
+
+def get_artist(artist_name:str):
+    network = create_network()
+    # parsed_date = datetime.strptime(scrobble.playback_date, LAST_FM_TIMESTAMP_FORMAT)
+    return network.get_artist
+
+
 def get_top_tags(scrobble: NamedTuple, tags_kept: int = 15):
     """Get up to tags_kept tags for a track if possible
 
