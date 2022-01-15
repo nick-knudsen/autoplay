@@ -21,7 +21,7 @@ class Track:
         self.artist = artist
         self.tags = tags
         self.date = date
-    
+
     def __hash__(self):
         return hash(self.__key())
 
@@ -59,5 +59,3 @@ class User:
     def _update_play_history(self, tracks: List[list]):  # also needs some brainstorming - not most efficient but don't have a better way without complete database
         """Update user to latest version of pulled tracks."""
         self.tracks = [Track(*track) for track in tracks]
-
-    

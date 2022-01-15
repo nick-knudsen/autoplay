@@ -24,10 +24,7 @@ def get_secrets():
 
 def create_network():
     """Create a pylast network for accessing the LastFM API
-    
-    Args:
-        None
-    
+
     Returns:
         network (pl.LastFMNetwork): a PyLast object for interacting with the LastFM API
     """
@@ -83,7 +80,7 @@ def get_top_tags(scrobble: NamedTuple, tags_kept: int = 15):
     #             pass
     # if len(top_tags) < tags_kept:
     #     top_tags.extend(track.get_artist().get_top_tags(limit = tags_kept - len(top_tags)))
-    
+
     # parse tag data
     parsed_tags = []
     for tag in top_tags:
@@ -118,7 +115,7 @@ def normalize_scrobbles(scrobbles: list):
 
     Args:
         scrobbles (list): list of user scrobbles
-    
+
     Returns:
         normalized (list): the user scrobbles in a normalized format
     """
@@ -136,7 +133,7 @@ def create_user(username: str, limit: int = None, overwrite: bool = False):
         username (str): LastFM username
         limit (int): The number of scrobbles to fetch, defaults to None, which fetches all scrobbles
         overwrite (bool): whether or not to overwrite an existing csv, defaults to False
-    
+
     Returns:
         (User): an internal User object
     """
@@ -145,7 +142,7 @@ def create_user(username: str, limit: int = None, overwrite: bool = False):
     filepath = os.path.join("data", username + "_" + str(limit) + ".csv")
     if (os.path.exists(filepath) and not overwrite):
         normalized_scrobbles = get_play_history_from_csv(filepath)
-    else:        
+    else:
         scrobbles = get_scrobbles(username, limit)
         normalized_scrobbles = normalize_scrobbles(scrobbles)
         write_library_to_csv(username, limit, normalized_scrobbles)

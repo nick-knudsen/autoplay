@@ -11,20 +11,21 @@ import data_tools.common_models as autoplay
 
 def calc_time_diff(scrobble_a: autoplay.Track, scrobble_b: autoplay.Track):
     """Calculate the difference in timestamps of two scrobbles
-    
+
     Args:
         scrobble_a (Track): a scrobble of one track
         scrobble_b (Track): a scrobble of another track
-    
+
     Returns:
         time_diff (timedelta): the difference of the scrobbles' timestamps
     """
     time_diff = abs(scrobble_a.date - scrobble_b.date)
     return time_diff
 
+
 def is_proximal(scrobble_a: autoplay.Track, scrobble_b: autoplay.Track, time_diff_cutoff: timedelta):
     """Determine if two scrobbles are proximal
-    
+
     Args:
         scrobble_a (Track): a scrobble of one track
         scrobble_b (Track): a scrobble of another track
@@ -35,6 +36,7 @@ def is_proximal(scrobble_a: autoplay.Track, scrobble_b: autoplay.Track, time_dif
     """
     time_diff = calc_time_diff(scrobble_a, scrobble_b)
     return time_diff <= time_diff_cutoff
+
 
 def calc_track_time_proximity(scrobble_a: autoplay.Track, library: List[autoplay.Track], time_diff_cutoff: timedelta):
     """Tracks are proximal if their timestamps are within a certain time of each other
@@ -66,19 +68,20 @@ def calc_track_time_proximity(scrobble_a: autoplay.Track, library: List[autoplay
 
     return time_diff_sums
 
+
 def calc_all_time_proximities(user: autoplay.User, time_diff_cutoff: timedelta):
     """Calculate time proximities for all tracks in a user's library
 
     Args:
         user (User): a user for which to calculate the time proximities
         time_diff_cutoff (timedelta): a time window within which tracks are proximal
-    
+
     Returns:
         track_time_proximities ({Track: {Track: float}}): a dict containing time proximities for all tracks in the users library
     """
 
     overall_time_diff_sums = {}
-    
+
     for track_b in user.tracks:
         # calculate time diffs for each scrobble in user library
         scrobble_time_diff_sums = calc_track_time_proximity(track_b, user.tracks, time_diff_cutoff)
@@ -105,7 +108,7 @@ def calc_all_time_proximities(user: autoplay.User, time_diff_cutoff: timedelta):
         track_time_proximities[track_b] = {}
         for track_a, sum_and_count in count_and_proximals[0].items():
             # the total number of scrobbles of track a in the user's library
-            num_scrobbles_a = overall_time_diff_sums[track_a][1]\
+            num_scrobbles_a = overall_time_diff_sums[track_a][1]
             # the number of scrobbles of track a that are proximal to track b
             num_scrobbles_a_prox_to_b = sum_and_count[1]
             # the total time diff between proximal tracks a and b
