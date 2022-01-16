@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'autoplay-example = src.main:main_example',
+            'pipeline-example = src.main:track_pipeline_example'
         ]
     }
 )
