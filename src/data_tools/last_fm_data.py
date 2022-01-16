@@ -3,7 +3,7 @@
 import os
 import csv
 from datetime import datetime
-from typing import NamedTuple, List
+from typing import NamedTuple, List, Union
 import logging
 import toml
 import pylast as pl
@@ -11,6 +11,7 @@ from .common_models import Track, User
 
 
 LAST_FM_TIMESTAMP_FORMAT = '%d %b %Y, %H:%M'
+
 
 def get_secrets():
     """Get secret contents of secrets.toml in outer dir. Do not commit this file."""
@@ -37,16 +38,23 @@ def create_network():
     return network
 
 
-def get_scrobbles(username: str, limit: int = None):
+def get_scrobbles(username: str, time_from: Union[float, datetime] = None, time_to: Union[float, datetime] = None, limit: int = None):
     """Get the scrobbles for a given user.
 
     Args:
         username (str): LastFM username
         limit (int): the number of scrobbles to get, defaults to None, which gets all user scrobbles
+        time_from (int): UNIX timestamp that will filter all scrobbles after
+        time_to (int): UNIX timestamp that will filter all scrobbles before
     """
+    if isinstance(time_from, datetime):
+        time_from = time_from.timestamp()
+    if isinstance(time_to, datetime):
+        time_to = time_to.timestamp()
+
     network = create_network()
     user = network.get_user(username)
-    scrobbles = user.get_recent_tracks(limit=limit)
+    scrobbles = user.get_recent_tracks(time_from=time_from, time_to=time_to, limit=limit)
 
     return scrobbles
 
