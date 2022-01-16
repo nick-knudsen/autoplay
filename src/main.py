@@ -20,7 +20,10 @@ def main_example():
 def track_pipeline_example():
     """[summary]
     """
-    user_artists = get_artists("Car_door", limit=10)
-    for artist_obj in user_artists:
-        print(artist_obj)
+    last_fm_name = 'Car_door'
+    print(f"Getting listening history for user {last_fm_name}...")
+    start_fetch = time.perf_counter()
+    my_user = create_user(last_fm_name, scrobble_limit=10, artist_limit=10, write_data=False)
+    end_fetch = time.perf_counter()
+    print(f"History retrieved in {end_fetch-start_fetch:0.1f} seconds.")
 

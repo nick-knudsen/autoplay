@@ -42,7 +42,7 @@ class Track:
 
     def get_extra_features(self):  # this function will need some brainstorming but will leave as template for now
         """Will go through some sort of API to get extra features associated with a track."""
-
+        pass
 
 class User:
     """Internal user class."""

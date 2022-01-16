@@ -103,7 +103,6 @@ def get_user_artists(user: str) -> list:
     Returns:
         list: [description]
     """
-    
     pass
 
 
@@ -182,7 +181,7 @@ def normalize_scrobbles(scrobbles: list):
     return normalized
 
 
-def create_user(username: str, limit: int = None, overwrite: bool = False):
+def create_user(username: str, scrobble_limit: int = None, artist_limit: int = None, overwrite: bool = False, write_data = False):
     """Create a common user class from LastFM username.
 
     Args:
@@ -195,14 +194,19 @@ def create_user(username: str, limit: int = None, overwrite: bool = False):
     """
     # temp soln until db is working
     # check if user tracks stored in csv
-    filepath = os.path.join("data", username + "_" + str(limit) + ".csv")
-    if (os.path.exists(filepath) and not overwrite):
+    filepath = os.path.join("data", username + "_" + str(scrobble_limit) + ".csv")
+    if write_data and not overwrite and os.path.exists(filepath):
         normalized_scrobbles = get_play_history_from_csv(filepath)
-    else:
-        scrobbles = get_scrobbles(username, limit)
+    elif write_data:
+        scrobbles = get_scrobbles(username, scrobble_limit)
         normalized_scrobbles = normalize_scrobbles(scrobbles)
-        write_library_to_csv(username, limit, normalized_scrobbles)
+        write_library_to_csv(username, scrobble_limit, normalized_scrobbles)
+    else:
+        scrobbles = get_scrobbles(username, scrobble_limit)
+        normalized_scrobbles = normalize_scrobbles(scrobbles)
+        artists = get_user_artists(username)
 
+    # TODO: add artists dict
     return User(username, normalized_scrobbles)
 
 
