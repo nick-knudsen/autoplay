@@ -38,7 +38,8 @@ def create_network():
     return network
 
 
-def get_scrobbles(username: str, time_from: Union[float, datetime] = None, time_to: Union[float, datetime] = None, limit: int = None):
+def get_scrobbles(username: str, time_from: Union[float, datetime] = None,
+                  time_to: Union[float, datetime] = None, limit: int = None):
     """Get the scrobbles for a given user.
 
     Args:
@@ -60,20 +61,26 @@ def get_scrobbles(username: str, time_from: Union[float, datetime] = None, time_
 
 
 # NOTE: This function will work great with the get_track_scrobbles function
-def get_artists(username: str, limit: int = None) -> list:
-    """Get the artists a given user has listened to.
+def get_artists(username: str, time_from: Union[float, datetime] = None,
+                time_to: Union[float, datetime] = None, limit: int = None):
+    """Get the scrobbles for a given user.
 
     Args:
         username (str): LastFM username
-        limit (int, optional): The limit on the number of artists to retrieve. Defaults to None (all artists).
-
-    Returns:
-        list: list of artist objects representing all the artists a given user has listened to.
+        limit (int): the number of scrobbles to get, defaults to None, which gets all user scrobbles
+        time_from (int): UNIX timestamp that will filter all scrobbles after
+        time_to (int): UNIX timestamp that will filter all scrobbles before
     """
+    if isinstance(time_from, datetime):
+        time_from = time_from.timestamp()
+    if isinstance(time_to, datetime):
+        time_to = time_to.timestamp()
+
     network = create_network()
     user = network.get_user(username)
     lib = user.get_library() # this is the object that holds all the artists a user has listened to
-    return lib.get_artists(limit=limit)
+
+    return lib.get_artists(time_from=time_from, time_to=time_to, limit=limit)
 
 
 def get_artist(artist_name:str):

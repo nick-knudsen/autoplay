@@ -44,24 +44,33 @@ class Track:
         """Will go through some sort of API to get extra features associated with a track."""
         pass
 
+
+class Artist:
+    """Artist class."""
+    def __init__(self, name: str, user_plays:int):
+        self.name = name
+        self.user_plays = user_plays
+
+
 class User:
     """Internal user class."""
-    def __init__(self, username: str, tracks: list[list]):
+    def __init__(self, username: str, tracks: List[list], artists: List[list]):
         """Instantiate one of our internal user classes.
-
         Args:
             username (str): user / username
             tracks (list[list]): list of track objects (timeseries)
+            artists (list[list]): list of artists.
         """
         self.username = username
-        self._update_play_history(tracks)
+        self._update_play_history(tracks, artists)
 
-    def _update_play_history(self, tracks: list[list]):  # also needs some brainstorming - not most efficient but don't have a better way without complete database
+    def _update_play_history(self, tracks: List[list], artists: List[list]):  # also needs some brainstorming - not most efficient but don't have a better way without complete database
         """Update user to latest version of pulled tracks."""
         self.tracks = [Track(*track) for track in tracks]
+        self.artists = [Artist(*artist) for artist in artists]
 
 
-    def filter_tracks_date(self, time_from: datetime, time_to: datetime):
+    def filter_play_history_date(self, time_from: datetime, time_to: datetime):
         """Filter user tracks into a specific time bin.
 
         Args:
@@ -75,14 +84,14 @@ class User:
 
             self.tracks = [track for track in self.tracks if time_from <= tack.date <= time_to]
 
-    def filter_artists_date(self, time_from: datetime, time_to: datetime):
-        """Filter user tracks into a specific time bin.
+        new_artists = {}
+        for track in self.tracks:
+            if track.artist in new_artists:
+                new_artists[track.artist] += 1
+            else:
+                new_artists[track.artist] = 1
 
-        Args:
-            time_from (datetime): start cutoff time
-            time_to (datetime): end cutoff time
-        """
-        pass   # TODO: needs special implementation and refactor of get_artists
+        self.artists = [Artist(key, value) for key, value in new_artists.items()]
 
     @property
     def tracks_frequency_dict(self):
