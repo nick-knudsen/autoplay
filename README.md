@@ -15,7 +15,7 @@ automatic playlist creation with last.fm data
 - similarity scorings between two users (maybe many types?)
 ### Metrics:
 - track time proximity: a calculation that aims to determine how related two tracks are by how often and how closely they are both listened to within a certain time window. A|B means track A was listened to in a time window of track B. 
-  ![Track time proximity](https://github.com/nick-knudsen/autoplay/blob/feature/track_proximity/misc/time_proximity_calc.PNG?raw=true)
+  ![Track time proximity](https://github.com/nick-knudsen/autoplay/blob/main/misc/time_proximity_calc.PNG?raw=true)
 - overlap between two users --> k means?
 - check to see if they have listened to any new music
 - song discovery --> how many new songs do they see in some rolling window
