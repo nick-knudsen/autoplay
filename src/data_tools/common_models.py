@@ -44,9 +44,18 @@ class Track:
         """Will go through some sort of API to get extra features associated with a track."""
         pass
 
+
+class Artist:
+    """[summary]
+    """
+    def __init__(self, name: str, user_plays:int) -> None:
+        self.name = name
+        self.user_plays = user_plays
+
+
 class User:
     """Internal user class."""
-    def __init__(self, username: str, tracks: List[list]):
+    def __init__(self, username: str, tracks: List[list], artists: List[list]):
         """Instantiate one of our internal user classes.
 
         Args:
@@ -54,8 +63,9 @@ class User:
             tracks (List[list]): list of track objects (timeseries)
         """
         self.username = username
-        self._update_play_history(tracks)
+        self._update_play_history(tracks, artists)
 
-    def _update_play_history(self, tracks: List[list]):  # also needs some brainstorming - not most efficient but don't have a better way without complete database
+    def _update_play_history(self, tracks: List[list], artists: List[list]):  # also needs some brainstorming - not most efficient but don't have a better way without complete database
         """Update user to latest version of pulled tracks."""
         self.tracks = [Track(*track) for track in tracks]
+        self.artists = [Artist(*artist) for artist in artists]

@@ -37,14 +37,13 @@ def create_network():
     return network
 
 
-def get_scrobbles(username: str, limit: int = None):
+def get_scrobbles(username: str, network: pl.LastFMNetwork, limit: int = None):
     """Get the scrobbles for a given user.
 
     Args:
         username (str): LastFM username
         limit (int): the number of scrobbles to get, defaults to None, which gets all user scrobbles
     """
-    network = create_network()
     user = network.get_user(username)
     scrobbles = user.get_recent_tracks(limit=limit)
 
@@ -52,7 +51,7 @@ def get_scrobbles(username: str, limit: int = None):
 
 
 # NOTE: This function will work great with the get_track_scrobbles function
-def get_artists(username: str, limit: int = None) -> list:
+def get_artists(username: str, network: pl.LastFMNetwork, limit: int = None) -> list:
     """Get the artists a given user has listened to.
 
     Args:
@@ -62,48 +61,17 @@ def get_artists(username: str, limit: int = None) -> list:
     Returns:
         list: list of artist objects representing all the artists a given user has listened to.
     """
-    network = create_network()
     user = network.get_user(username)
     lib = user.get_library() # this is the object that holds all the artists a user has listened to
-    return lib.get_artists(limit=limit)
+    artists = []
 
+    artist_array = lib.get_artists(limit=limit)
+    for artist_obj in artist_array:
+        # NOTE: We can acquire more data using the Artist class
+        user_play_count = artist_obj.playcount
+        artists.append([str(artist_obj.item), user_play_count])
 
-def get_artist(artist_name:str):
-    """[summary]
-
-    Args:
-        artist_name (str): [description]
-
-    Returns:
-        [type]: [description]
-    """
-    network = create_network()
-    return network.get_artist()
-
-
-def process_artist_information(artists:List) -> dict:
-    """[summary]
-
-    Args:
-        artists (List): [description]
-
-    Returns:
-        dict: [description]
-    """
-    # artist = datetime.strptime(scrobble.playback_date, LAST_FM_TIMESTAMP_FORMAT)
-    pass
-
-
-def get_user_artists(user: str) -> list:
-    """[summary]
-
-    Args:
-        user (str): [description]
-
-    Returns:
-        list: [description]
-    """
-    pass
+    return artists
 
 
 def get_top_tags(scrobble: NamedTuple, tags_kept: int = 15):
@@ -194,6 +162,7 @@ def create_user(username: str, scrobble_limit: int = None, artist_limit: int = N
     """
     # temp soln until db is working
     # check if user tracks stored in csv
+    network = create_network()
     filepath = os.path.join("data", username + "_" + str(scrobble_limit) + ".csv")
     if write_data and not overwrite and os.path.exists(filepath):
         normalized_scrobbles = get_play_history_from_csv(filepath)
@@ -202,12 +171,11 @@ def create_user(username: str, scrobble_limit: int = None, artist_limit: int = N
         normalized_scrobbles = normalize_scrobbles(scrobbles)
         write_library_to_csv(username, scrobble_limit, normalized_scrobbles)
     else:
-        scrobbles = get_scrobbles(username, scrobble_limit)
+        scrobbles = get_scrobbles(username, network, limit=scrobble_limit)
         normalized_scrobbles = normalize_scrobbles(scrobbles)
-        artists = get_user_artists(username)
+        artists = get_artists(username, network, limit=artist_limit)
 
-    # TODO: add artists dict
-    return User(username, normalized_scrobbles)
+    return User(username, normalized_scrobbles, artists)
 
 
 # temp soln until db is working
