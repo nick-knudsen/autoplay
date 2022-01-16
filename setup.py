@@ -24,7 +24,8 @@ setup(
     install_requires=get_requirements(),
     entry_points={
         'console_scripts': [
-            'autoplay-example = autoplay.main:main_example',
+            'autoplay-example = src.main:main_example',
+            'pipeline-example = src.main:track_pipeline_example'
         ]
     }
 )
