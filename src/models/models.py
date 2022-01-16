@@ -45,11 +45,11 @@ def generic_overlap(user_a: User, user_b: User, level: ComparisonLevel):
         raise BadComparisonLevelException(f'level {level} was not in comparison types {COMPARISON_TYPES}')
 
     if level == ComparisonLevel.SONG:
-        user_a_frequency = user_a.get_song_frequency_dict()
-        user_b_frequency = user_b.get_song_frequency_dict()
+        user_a_frequency = user_a.tracks_frequency_dict()
+        user_b_frequency = user_b.tracks_frequency_dict()
     elif level == ComparisonLevel.ARTIST:
-        user_a_frequency = user_a.get_artist_frequency_dict()
-        user_b_frequency = user_b.get_artist_frequency_dict()
+        user_a_frequency = user_a.artists_frequency_dict()
+        user_b_frequency = user_b.artists_frequency_dict()
     elif level == ComparisonLevel.ALBUM:
         raise NotImplementedError
 
@@ -64,9 +64,9 @@ def generic_overlap(user_a: User, user_b: User, level: ComparisonLevel):
     if not in_both:
         return metric
 
-    for song in in_both:
-        num_played_a = user_a_frequency[song]
-        num_played_b = user_b_frequency[song]
+    for common in in_both:
+        num_played_a = user_a_frequency[common]
+        num_played_b = user_b_frequency[common]
 
         overlap += (num_played_a / total_a) + (num_played_b / total_b)
 
