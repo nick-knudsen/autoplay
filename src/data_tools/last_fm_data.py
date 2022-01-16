@@ -151,7 +151,7 @@ def create_user(username: str, limit: int = None, overwrite: bool = False):
     if (os.path.exists(filepath) and not overwrite):
         normalized_scrobbles = get_play_history_from_csv(filepath)
     else:
-        scrobbles = get_scrobbles(username, limit)
+        scrobbles = get_scrobbles(username, limit=limit)
         normalized_scrobbles = normalize_scrobbles(scrobbles)
         write_library_to_csv(username, limit, normalized_scrobbles)
 
@@ -171,7 +171,7 @@ def get_play_history_from_csv(infilepath: str):
 
 # temp soln until db is working
 def write_library_to_csv(username: str, limit: int, library: List[list]):
-    outfilepath = os.path.join("data", username + "_" + str(limit) + ".csv")
+    outfilepath = os.path.join("autoplay\data", username + "_" + str(limit) + ".csv")
     with open(outfilepath, 'w', encoding='utf-8', newline='') as outfile:
         writer = csv.writer(outfile, delimiter="|")
         writer.writerows(library)

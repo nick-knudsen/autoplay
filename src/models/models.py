@@ -6,10 +6,10 @@ from typing import List
 # third-party imports
 import numpy as np
 # local imports
-import data_tools.common_models as autoplay
+from ..data_tools.common_models import *
 
 
-def calc_time_diff(scrobble_a: autoplay.Track, scrobble_b: autoplay.Track):
+def calc_time_diff(scrobble_a: Track, scrobble_b: Track):
     """Calculate the difference in timestamps of two scrobbles
 
     Args:
@@ -23,7 +23,7 @@ def calc_time_diff(scrobble_a: autoplay.Track, scrobble_b: autoplay.Track):
     return time_diff
 
 
-def is_proximal(scrobble_a: autoplay.Track, scrobble_b: autoplay.Track, time_diff_cutoff: timedelta):
+def is_proximal(scrobble_a: Track, scrobble_b: Track, time_diff_cutoff: timedelta):
     """Determine if two scrobbles are proximal
 
     Args:
@@ -38,7 +38,7 @@ def is_proximal(scrobble_a: autoplay.Track, scrobble_b: autoplay.Track, time_dif
     return time_diff <= time_diff_cutoff
 
 
-def calc_track_time_proximity(scrobble_a: autoplay.Track, library: List[autoplay.Track], time_diff_cutoff: timedelta):
+def calc_track_time_proximity(scrobble_a: Track, library: List[Track], time_diff_cutoff: timedelta):
     """Tracks are proximal if their timestamps are within a certain time of each other
     Calculate the timedeltas for all scrobbles in the time window from scrobble_a
 
@@ -69,7 +69,7 @@ def calc_track_time_proximity(scrobble_a: autoplay.Track, library: List[autoplay
     return time_diff_sums
 
 
-def calc_all_time_proximities(user: autoplay.User, time_diff_cutoff: timedelta):
+def calc_all_time_proximities(user: User, time_diff_cutoff: timedelta):
     """Calculate time proximities for all tracks in a user's library
 
     Args:

@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'autoplay-example = src.main:main_example',
+            'cluster-test = src.main:clustering_example'
         ]
     }
 )
