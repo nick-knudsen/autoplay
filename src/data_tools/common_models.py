@@ -108,7 +108,6 @@ class User:
     @property
     def artists_frequency_dict(self):
         """Create a frequency dictionary of the artists."""
-        raise NotImplementedError
         frequency = {}
         for artist in self.artists:
             frequency[artist] = artist.user_plays
