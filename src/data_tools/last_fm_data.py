@@ -14,7 +14,7 @@ LAST_FM_TIMESTAMP_FORMAT = '%d %b %Y, %H:%M'
 
 
 def get_secrets():
-    """Get secret contents of secrets.toml in outer dir. Do not commit this file."""
+    """Get secret contents of secrets.toml in outer dir."""
     expected_secret_path = 'secrets.toml'
     secrets = toml.load(expected_secret_path)
     api_key = secrets['secrets']['api_key']
@@ -27,7 +27,7 @@ def create_network():
     """Create a pylast network for accessing the LastFM API
 
     Returns:
-        network (pl.LastFMNetwork): a PyLast object for interacting with the LastFM API
+        network (pl.LastFMNetwork): a PyLast object
     """
     api_key, secret = get_secrets()
     network = pl.LastFMNetwork(

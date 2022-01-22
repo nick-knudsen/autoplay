@@ -47,7 +47,7 @@ class Track:
 
 class Artist:
     """Artist class."""
-    def __init__(self, name: str, user_plays:int):
+    def __init__(self, name: str, user_plays: int):
         self.name = name
         self.user_plays = user_plays
 
@@ -68,7 +68,6 @@ class User:
         """Update user to latest version of pulled tracks."""
         self.tracks = [Track(*track) for track in tracks]
         self.artists = [Artist(*artist) for artist in artists]
-
 
     def filter_play_history_date(self, time_from: datetime, time_to: datetime):
         """Filter user tracks into a specific time bin.
