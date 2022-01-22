@@ -51,7 +51,7 @@ def generic_overlap(user_a: User, user_b: User, level: ComparisonLevel):
         user_a_frequency = user_a.artists_frequency_dict()
         user_b_frequency = user_b.artists_frequency_dict()
     elif level == ComparisonLevel.ALBUM:
-        raise NotImplementedError
+        raise NotImplementedError("")
 
     unique_a = set(user_a_frequency.keys())
     unique_b = set(user_b_frequency.keys())
@@ -62,7 +62,7 @@ def generic_overlap(user_a: User, user_b: User, level: ComparisonLevel):
     overlap = 0
     in_both = len(unique_a.intersection(unique_b))
     if not in_both:
-        return metric
+        return overlap
 
     for common in in_both:
         num_played_a = user_a_frequency[common]

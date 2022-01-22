@@ -6,4 +6,6 @@ from .models import generic_overlap, ComparisonLevel
 
 
 def test_overlap(user_a, user_b):
-    generic_overlap(user_a, user_b, ComparisonLevel.SONG)
+    ratio = generic_overlap(user_a, user_b, ComparisonLevel.SONG)
+
+    return ratio

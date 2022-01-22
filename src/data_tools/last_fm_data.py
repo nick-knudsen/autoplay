@@ -83,7 +83,7 @@ def get_artists(username: str, time_from: Union[float, datetime] = None,
     return lib.get_artists(time_from=time_from, time_to=time_to, limit=limit)
 
 
-def get_artist(artist_name:str):
+def get_artist(artist_name: str):
     """[summary]
 
     Args:
@@ -96,7 +96,7 @@ def get_artist(artist_name:str):
     return network.get_artist()
 
 
-def process_artist_information(artists:List) -> dict:
+def process_artist_information(artists: List) -> dict:
     """[summary]
 
     Args:
@@ -169,8 +169,8 @@ def normalize_scrobble(scrobble: NamedTuple):
         normalized (list): a normalized format for a scrobble
     """
     parsed_date = datetime.strptime(scrobble.playback_date, LAST_FM_TIMESTAMP_FORMAT)
-    #top_tags = get_top_tags(scrobble)
-    top_tags=[]
+    # top_tags = get_top_tags(scrobble)
+    top_tags = []
     try:
         artist, title = str(scrobble.track).split(" - ", 1)
     except ValueError:
@@ -196,7 +196,7 @@ def normalize_scrobbles(scrobbles: list):
     return normalized
 
 
-def create_user(username: str, scrobble_limit: int = None, artist_limit: int = None, overwrite: bool = False, write_data = False):
+def create_user(username: str, scrobble_limit: int = None, artist_limit: int = None, overwrite: bool = False, write_data: bool = False):
     """Create a common user class from LastFM username.
 
     Args:
