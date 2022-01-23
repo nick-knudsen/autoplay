@@ -14,7 +14,7 @@ LAST_FM_TIMESTAMP_FORMAT = '%d %b %Y, %H:%M'
 
 
 def get_secrets():
-    """Get secret contents of secrets.toml in outer dir. Do not commit this file."""
+    """Get secret contents of secrets.toml in outer dir."""
     expected_secret_path = 'secrets.toml'
     secrets = toml.load(expected_secret_path)
     api_key = secrets['secrets']['api_key']
@@ -27,7 +27,7 @@ def create_network():
     """Create a pylast network for accessing the LastFM API
 
     Returns:
-        network (pl.LastFMNetwork): a PyLast object for interacting with the LastFM API
+        network (pl.LastFMNetwork): a PyLast object
     """
     api_key, secret = get_secrets()
     network = pl.LastFMNetwork(
@@ -38,7 +38,8 @@ def create_network():
     return network
 
 
-def get_scrobbles(username: str, time_from: Union[float, datetime] = None, time_to: Union[float, datetime] = None, limit: int = None):
+def get_scrobbles(username: str, time_from: Union[float, datetime] = None,
+                  time_to: Union[float, datetime] = None, limit: int = None):
     """Get the scrobbles for a given user.
 
     Args:
@@ -57,6 +58,67 @@ def get_scrobbles(username: str, time_from: Union[float, datetime] = None, time_
     scrobbles = user.get_recent_tracks(time_from=time_from, time_to=time_to, limit=limit)
 
     return scrobbles
+
+
+# NOTE: This function will work great with the get_track_scrobbles function
+def get_artists(username: str, time_from: Union[float, datetime] = None,
+                time_to: Union[float, datetime] = None, limit: int = None):
+    """Get the scrobbles for a given user.
+
+    Args:
+        username (str): LastFM username
+        limit (int): the number of scrobbles to get, defaults to None, which gets all user scrobbles
+        time_from (int): UNIX timestamp that will filter all scrobbles after
+        time_to (int): UNIX timestamp that will filter all scrobbles before
+    """
+    if isinstance(time_from, datetime):
+        time_from = time_from.timestamp()
+    if isinstance(time_to, datetime):
+        time_to = time_to.timestamp()
+
+    network = create_network()
+    user = network.get_user(username)
+    lib = user.get_library() # this is the object that holds all the artists a user has listened to
+
+    return lib.get_artists(time_from=time_from, time_to=time_to, limit=limit)
+
+
+def get_artist(artist_name: str):
+    """[summary]
+
+    Args:
+        artist_name (str): [description]
+
+    Returns:
+        [type]: [description]
+    """
+    network = create_network()
+    return network.get_artist()
+
+
+def process_artist_information(artists: List) -> dict:
+    """[summary]
+
+    Args:
+        artists (List): [description]
+
+    Returns:
+        dict: [description]
+    """
+    # artist = datetime.strptime(scrobble.playback_date, LAST_FM_TIMESTAMP_FORMAT)
+    pass
+
+
+def get_user_artists(user: str) -> list:
+    """[summary]
+
+    Args:
+        user (str): [description]
+
+    Returns:
+        list: [description]
+    """
+    pass
 
 
 def get_top_tags(scrobble: NamedTuple, tags_kept: int = 15):
@@ -107,8 +169,8 @@ def normalize_scrobble(scrobble: NamedTuple):
         normalized (list): a normalized format for a scrobble
     """
     parsed_date = datetime.strptime(scrobble.playback_date, LAST_FM_TIMESTAMP_FORMAT)
-    #top_tags = get_top_tags(scrobble)
-    top_tags=[]
+    # top_tags = get_top_tags(scrobble)
+    top_tags = []
     try:
         artist, title = str(scrobble.track).split(" - ", 1)
     except ValueError:
@@ -134,7 +196,7 @@ def normalize_scrobbles(scrobbles: list):
     return normalized
 
 
-def create_user(username: str, limit: int = None, overwrite: bool = False):
+def create_user(username: str, scrobble_limit: int = None, artist_limit: int = None, overwrite: bool = False, write_data: bool = False):
     """Create a common user class from LastFM username.
 
     Args:
@@ -147,14 +209,19 @@ def create_user(username: str, limit: int = None, overwrite: bool = False):
     """
     # temp soln until db is working
     # check if user tracks stored in csv
-    filepath = os.path.join("data", username + "_" + str(limit) + ".csv")
-    if (os.path.exists(filepath) and not overwrite):
+    filepath = os.path.join("data", username + "_" + str(scrobble_limit) + ".csv")
+    if write_data and not overwrite and os.path.exists(filepath):
         normalized_scrobbles = get_play_history_from_csv(filepath)
-    else:
-        scrobbles = get_scrobbles(username, limit)
+    elif write_data:
+        scrobbles = get_scrobbles(username, scrobble_limit)
         normalized_scrobbles = normalize_scrobbles(scrobbles)
-        write_library_to_csv(username, limit, normalized_scrobbles)
+        write_library_to_csv(username, scrobble_limit, normalized_scrobbles)
+    else:
+        scrobbles = get_scrobbles(username, scrobble_limit)
+        normalized_scrobbles = normalize_scrobbles(scrobbles)
+        artists = get_user_artists(username)
 
+    # TODO: add artists dict
     return User(username, normalized_scrobbles)
 
 

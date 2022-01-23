@@ -1,15 +1,79 @@
-"""Models for making sense of our data and structure."""
-# standard imports
-from datetime import timedelta
+"""Models for making sense of our data."""
+
+from datetime import datetime, timedelta
 from time import time
-from typing import List
-# third-party imports
+from typing import List, Union
+from enum import Enum
+
 import numpy as np
-# local imports
-import data_tools.common_models as autoplay
+
+from data_tools.common_models import User, Track
 
 
-def calc_time_diff(scrobble_a: autoplay.Track, scrobble_b: autoplay.Track):
+class ComparisonLevel(Enum):
+    """Comparison type options.
+
+    Options:
+        SONG: compare at song level
+        ARTIST: compare at artist level
+        ALBUM: compare at album level
+    """
+    SONG = 'song'
+    ARTIST = 'artist'
+    ALBUM = 'album'
+
+
+class BadComparisonLevelException(Exception):
+    """Exception raised when ComparisonLevel is bad."""
+
+
+COMPARISON_TYPES = [comparison for comparison in ComparisonLevel]
+
+
+def generic_overlap(user_a: User, user_b: User, level: ComparisonLevel):
+    """Calculate a basic overlap metric between two users.
+
+    Args:
+        user_a (User): common User class
+        user_b (User): common User class
+        level (ComparisonLevel): Way to compare, either ComparisonLevel.ARTIST or ComparisonLevel.SONG
+
+    Raises:
+        BadComparisonLevelException: if level not in ComparisonLevel
+    """
+    if level not in COMPARISON_TYPES:
+        raise BadComparisonLevelException(f'level {level} was not in comparison types {COMPARISON_TYPES}')
+
+    if level == ComparisonLevel.SONG:
+        user_a_frequency = user_a.tracks_frequency_dict()
+        user_b_frequency = user_b.tracks_frequency_dict()
+    elif level == ComparisonLevel.ARTIST:
+        user_a_frequency = user_a.artists_frequency_dict()
+        user_b_frequency = user_b.artists_frequency_dict()
+    elif level == ComparisonLevel.ALBUM:
+        raise NotImplementedError("")
+
+    unique_a = set(user_a_frequency.keys())
+    unique_b = set(user_b_frequency.keys())
+
+    total_a = np.sum([unique_a[key] for key in user_a_frequency])
+    total_b = np.sum([unique_b[key] for key in user_b_frequency])
+
+    overlap = 0
+    in_both = len(unique_a.intersection(unique_b))
+    if not in_both:
+        return overlap
+
+    for common in in_both:
+        num_played_a = user_a_frequency[common]
+        num_played_b = user_b_frequency[common]
+
+        overlap += (num_played_a / total_a) + (num_played_b / total_b)
+
+    return overlap
+
+
+def calc_time_diff(scrobble_a: Track, scrobble_b: Track):
     """Calculate the difference in timestamps of two scrobbles
 
     Args:
@@ -23,7 +87,7 @@ def calc_time_diff(scrobble_a: autoplay.Track, scrobble_b: autoplay.Track):
     return time_diff
 
 
-def is_proximal(scrobble_a: autoplay.Track, scrobble_b: autoplay.Track, time_diff_cutoff: timedelta):
+def is_proximal(scrobble_a: Track, scrobble_b: Track, time_diff_cutoff: timedelta):
     """Determine if two scrobbles are proximal
 
     Args:
@@ -38,7 +102,7 @@ def is_proximal(scrobble_a: autoplay.Track, scrobble_b: autoplay.Track, time_dif
     return time_diff <= time_diff_cutoff
 
 
-def calc_track_time_proximity(scrobble_a: autoplay.Track, library: List[autoplay.Track], time_diff_cutoff: timedelta):
+def calc_track_time_proximity(scrobble_a: Track, library: List[Track], time_diff_cutoff: timedelta):
     """Tracks are proximal if their timestamps are within a certain time of each other
     Calculate the timedeltas for all scrobbles in the time window from scrobble_a
 
@@ -69,7 +133,7 @@ def calc_track_time_proximity(scrobble_a: autoplay.Track, library: List[autoplay
     return time_diff_sums
 
 
-def calc_all_time_proximities(user: autoplay.User, time_diff_cutoff: timedelta):
+def calc_all_time_proximities(user: User, time_diff_cutoff: timedelta):
     """Calculate time proximities for all tracks in a user's library
 
     Args:
